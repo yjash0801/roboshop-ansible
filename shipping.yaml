@@ -64,7 +64,14 @@
 
   - name: Print the schema data
     ansible.builtin.debug:
-      msg: "Schema output: {{Schema}}"
+      msg: "Schema output: {{Schema.stdout}}"
 
-  # - name: Load the data to MySQL
-  #   ansible.builtin.command: mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -p{{mysql_password}} < /app/schema/shipping.sql 
+  - name: Load the data to MySQL
+    ansible.builtin.command: mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -p{{mysql_password}} < /app/schema/shipping.sql
+    when: Schema.stdout != "1"
+
+  - name: start and enable shipping
+    ansible.builtin.service:
+      name: shipping
+      state: restarted
+      enabled: yes
