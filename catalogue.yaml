@@ -13,14 +13,60 @@
       name: nodejs
       state: present
   
-  # - name: Add roboshop user
-  #   ansible.builtin.user:
-  #   name: roboshop
+  - name: Add roboshop user
+    ansible.builtin.user:
+    name: roboshop
 
-  # - name: Create directory app
-  #   ansible.builtin.file:
-  #     path: /app
-  #     state: directory
+  - name: Create directory app
+    ansible.builtin.file:
+      path: /app
+      state: directory
   
-  # - name:
+  - name: Download the catalogue application
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+      dest: /tmp/
+    
+  - name: Unzip catalogue.zip to /app directory
+    ansible.builtin.unarchive:
+      src: /tmp/catalogue.zip
+      dest: /app
+      remote_src: yes
 
+  - name: Move to app directory
+    ansible.builtin.command: npm install
+    args:
+      chdir: /app
+
+  - name: Copy the catalogue.service file
+    ansible.builtin.copy:
+      src: catalogue.service
+      dest: /etc/systemd/system/catalogue.service
+
+  - name: daemon-reload the system
+    ansible.builtin.systemd_service:
+      daemon_reload: true
+  
+  - name: Copy the mongo.repo file
+    ansible.builtin.copy:
+      src: mongo.repo
+      dest: /etc/yum.repos.d/mongo.repo
+
+  - name: Install MongoDB client
+    ansible.builtin.package:
+      name: mongodb-org-shell
+      state: present
+  
+  - name: Get catagories count
+    ansible.builtin.command: mongo --host mongodb.mechanoidstore.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
+    register: product_count
+
+  - name: Load Schema to MongoDB
+    ansible.builtin.command: mongo --host mongodb.mechanoidstore.online < /app/schema/catalogue.js
+    when: product_count.stdout == 0
+
+  - name: Start and enable catalogue service
+    ansible.builtin.service:
+      name: catalogue
+      state: started
+      enabled: yes
