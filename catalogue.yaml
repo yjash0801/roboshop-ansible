@@ -33,7 +33,7 @@
       dest: /app
       remote_src: yes
 
-  - name: Move to app directory
+  - name: Move to app directory and install dependencies
     ansible.builtin.command: npm install
     args:
       chdir: /app
