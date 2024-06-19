@@ -1,19 +1,19 @@
-- name: Setting up catalogue
-  hosts: catalogue
+- name: Setting up user
+  hosts: user
   become: yes
   tasks:
   - name: Disable current nodejs version
     ansible.builtin.command: dnf module disable nodejs -y
-
+  
   - name: Enable nodejs version 18
     ansible.builtin.command: dnf module enable nodejs:18 -y
-
-  - name: Install nodejs
+  
+  - name: Install NodeJS
     ansible.builtin.package:
       name: nodejs
       state: present
-  
-  - name: Add roboshop user
+
+  - name: Add application User roboshop
     ansible.builtin.user:
       name: roboshop
 
@@ -26,15 +26,15 @@
     ansible.builtin.file:
       path: /app
       state: directory
-  
-  - name: Download the catalogue application
+
+  - name: Download the user application
     ansible.builtin.get_url:
-      url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+      url: https://roboshop-builds.s3.amazonaws.com/user.zip
       dest: /tmp/
-    
-  - name: Unzip catalogue.zip to /app directory
+
+  - name: Unzip the user.zip to app directory
     ansible.builtin.unarchive:
-      src: /tmp/catalogue.zip
+      src: /tmp/user.zip
       dest: /app
       remote_src: yes
 
@@ -43,22 +43,22 @@
     args:
       chdir: /app
 
-  - name: Copy the catalogue.service file
+  - name: Copy user.service file
     ansible.builtin.copy:
-      src: catalogue.service
-      dest: /etc/systemd/system/catalogue.service
+      src: user.service
+      dest: /etc/systemd/system/user.service
 
-  - name: daemon-reload the system
+  - name: System daemon-reload
     ansible.builtin.systemd_service:
       daemon_reload: true
 
-  - name: Start and enable catalogue service
+  - name: Start and enable user service
     ansible.builtin.service:
-      name: catalogue
+      name: user
       state: started
       enabled: yes
-  
-  - name: Copy the mongo.repo file
+
+  - name: Copy mongo repo file
     ansible.builtin.copy:
       src: mongo.repo
       dest: /etc/yum.repos.d/mongo.repo
@@ -67,20 +67,20 @@
     ansible.builtin.package:
       name: mongodb-org-shell
       state: present
-  
-  - name: Get catagories count
-    ansible.builtin.command: mongo --host mongodb.mechanoidstore.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
-    register: product_count
 
-  - name: print product count
+  - name: Get the User count
+    ansible.builtin.command: mongo --host mongodb.daws76s.online --quiet --eval 'db = db.getSiblingDB("users"); db.users.count()'
+    register: user_count
+
+  - name: Print the User count
     ansible.builtin.debug:
-      msg: "Product count: {{product_count}}"
+      msg: "User_count: {{user_count.stdout}}"
 
-  - name: Load Schema to MongoDB
-    ansible.builtin.command: mongo --host mongodb.mechanoidstore.online < /app/schema/catalogue.js
+  - name: Load schema to MongoDB
+    ansible.builtin.command: mongo --host mongodb.mechanoidstore.online < /app/schema/user.js
     when: product_count.stdout == "0"
 
   - name: Restart user service
     ansible.builtin.service:
-      name: catalogue
+      name: user
       state: restarted
