@@ -67,7 +67,7 @@
 
   - name: Load Schema to MongoDB
     ansible.builtin.command: mongo --host mongodb.mechanoidstore.online < /app/schema/catalogue.js
-    when: product_count.stdout == 0
+    when: product_count.stdout == "0"
 
   - name: Start and enable catalogue service
     ansible.builtin.service:
