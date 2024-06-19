@@ -42,17 +42,17 @@
     - "go get" 
     - "go build"
 
-    - name: Copy the dispatch service file
-      ansible.builtin.copy:
-        src: dispatch.service
-        dest: /etc/systemd/system/dispatch.service
+  - name: Copy the dispatch service file
+    ansible.builtin.copy:
+      src: dispatch.service
+      dest: /etc/systemd/system/dispatch.service
 
-    - name: System daemon-reload
-      ansible.builtin.systemd_service:
-        daemon-reload: true
+  - name: System daemon-reload
+    ansible.builtin.systemd_service:
+      daemon-reload: true
 
-    - name: Start and enable dispatch service
-      ansible.builtin.service:
-        name: dispatch
-        state: restarted
-        enabled: yes
+  - name: Start and enable dispatch service
+    ansible.builtin.service:
+      name: dispatch
+      state: restarted
+      enabled: yes
