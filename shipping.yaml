@@ -57,4 +57,13 @@
       name: mysql
       state: present
 
-  - name: 
+  - name: Get schema data from MySQL
+    ansible.builtin.command: mysql -h mysql.mechanoidstore.online -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='cities'"
+    regiter: Schema
+
+  - name: Print the schema data
+    ansible.builtin.debug:
+      msg: "Schema output: {{Schema}}"
+
+  # - name: Load the data to MySQL
+  #   ansible.builtin.command: mysql -h <MYSQL-SERVER-IPADDRESS> -uroot -p{{mysql_password}} < /app/schema/shipping.sql 
