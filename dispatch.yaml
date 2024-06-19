@@ -19,7 +19,7 @@
   - name: Create app directory
     ansible.builtin.file:
       path: /app
-      state: present
+      state: directory
 
   - name: Download the application code dispatch
     ansible.builtin.get_url:
