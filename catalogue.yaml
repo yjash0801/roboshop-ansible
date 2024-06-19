@@ -60,6 +60,8 @@
   - name: Get catagories count
     ansible.builtin.command: mongo --host mongodb.mechanoidstore.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
     register: product_count
+
+  - name: print product count
     ansible.builtin.debug:
       msg: "Product count: {{product_count}}"
 
