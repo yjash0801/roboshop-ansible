@@ -78,7 +78,7 @@
 
   - name: Load schema to MongoDB
     ansible.builtin.command: mongo --host mongodb.mechanoidstore.online < /app/schema/user.js
-    when: product_count.stdout == "0"
+    when: user_count.stdout == "0"
 
   - name: Restart user service
     ansible.builtin.service:
