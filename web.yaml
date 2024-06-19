@@ -23,13 +23,18 @@
       path: /usr/share/nginx/html
       state: directory
 
-  - name: Unarchive a file that needs to be downloaded (added in 2.0)
+  - name: Download and unarchive web.zip
     ansible.builtin.unarchive:
       src: https://roboshop-builds.s3.amazonaws.com/web.zip
       dest: /usr/share/nginx/html
       remote_src: yes
   
-  - name: Copy file with owner and permissions
+  - name: Copy file roboshop.conf
     ansible.builtin.copy:
       src: roboshop.conf
-      dest: /etc/nginx/default.d/roboshop.conf 
+      dest: /etc/nginx/default.d/roboshop.conf
+    
+  - name: Restart Nginx
+    ansible.builtin.service:
+      name: nginx
+      state: restarted
