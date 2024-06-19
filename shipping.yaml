@@ -59,7 +59,7 @@
 
   - name: Get schema data from MySQL
     ansible.builtin.command: mysql -h mysql.mechanoidstore.online -uroot -p{{mysql_password}} -sN -e "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='cities'"
-    regiter: Schema
+    register: Schema
 
   - name: Print the schema data
     ansible.builtin.debug:
