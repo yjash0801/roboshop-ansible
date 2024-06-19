@@ -21,7 +21,7 @@
   - name: Create the html directory in /usr/share/nginx
     ansible.builtin.file:
       path: /usr/share/nginx/html
-      state: presnet
+      state: present
 
   - name: Unarchive a file that needs to be downloaded (added in 2.0)
     ansible.builtin.unarchive:
