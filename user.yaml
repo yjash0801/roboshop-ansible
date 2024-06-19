@@ -30,7 +30,7 @@
   - name: Download the user application
     ansible.builtin.get_url:
       url: https://roboshop-builds.s3.amazonaws.com/user.zip
-      dest: /tmp/
+      dest: /tmp
 
   - name: Unzip the user.zip to app directory
     ansible.builtin.unarchive:
@@ -51,12 +51,6 @@
   - name: System daemon-reload
     ansible.builtin.systemd_service:
       daemon_reload: true
-
-  - name: Start and enable user service
-    ansible.builtin.service:
-      name: user
-      state: started
-      enabled: yes
 
   - name: Copy mongo repo file
     ansible.builtin.copy:
@@ -84,3 +78,4 @@
     ansible.builtin.service:
       name: user
       state: restarted
+      enabled: yes

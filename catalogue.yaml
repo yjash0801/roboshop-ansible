@@ -9,7 +9,7 @@
     ansible.builtin.command: dnf module enable nodejs:18 -y
 
   - name: Install nodejs
-    ansible.builtin.package:
+    ansible.builtin.dnf:
       name: nodejs
       state: present
   
@@ -30,7 +30,7 @@
   - name: Download the catalogue application
     ansible.builtin.get_url:
       url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
-      dest: /tmp/
+      dest: /tmp
     
   - name: Unzip catalogue.zip to /app directory
     ansible.builtin.unarchive:
@@ -51,12 +51,6 @@
   - name: daemon-reload the system
     ansible.builtin.systemd_service:
       daemon_reload: true
-
-  - name: Start and enable catalogue service
-    ansible.builtin.service:
-      name: catalogue
-      state: started
-      enabled: yes
   
   - name: Copy the mongo.repo file
     ansible.builtin.copy:
@@ -74,7 +68,7 @@
 
   - name: print product count
     ansible.builtin.debug:
-      msg: "Product count: {{product_count}}"
+      msg: "Product count: {{product_count.stdout}}"
 
   - name: Load Schema to MongoDB
     ansible.builtin.command: mongo --host mongodb.mechanoidstore.online < /app/schema/catalogue.js
@@ -84,3 +78,4 @@
     ansible.builtin.service:
       name: catalogue
       state: restarted
+      enabled: yes

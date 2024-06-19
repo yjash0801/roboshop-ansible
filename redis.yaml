@@ -25,5 +25,5 @@
   - name: Start and enable nginx
     ansible.builtin.service:
       name: redis
-      state: started
+      state: restarted
       enabled: yes

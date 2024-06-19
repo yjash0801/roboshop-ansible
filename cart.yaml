@@ -9,7 +9,7 @@
     ansible.builtin.command: dnf module enable nodejs:18 -y
 
   - name: Install nodejs
-    ansible.builtin.package:
+    ansible.builtin.dnf:
       name: nodejs
       state: present
 
@@ -30,7 +30,7 @@
   - name: Download cart application
     ansible.builtin.get_url:
       url: https://roboshop-builds.s3.amazonaws.com/cart.zip
-      dest: /tmp/
+      dest: /tmp
 
   - name: Unzip the user.zip file
     ansible.builtin.unarchive:
@@ -55,5 +55,5 @@
   - name: Start and enable cart service
     ansible.builtin.service:
       name: cart
-      state: started
+      state: restarted
       enabled: yes
