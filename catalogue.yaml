@@ -60,6 +60,8 @@
   - name: Get catagories count
     ansible.builtin.command: mongo --host mongodb.mechanoidstore.online --quiet --eval 'db = db.getSiblingDB("catalogue"); db.products.count()'
     register: product_count
+    ansible.builtin.debug:
+      msg: "Product count: {{product_count}}"
 
   - name: Load Schema to MongoDB
     ansible.builtin.command: mongo --host mongodb.mechanoidstore.online < /app/schema/catalogue.js
@@ -68,5 +70,5 @@
   - name: Start and enable catalogue service
     ansible.builtin.service:
       name: catalogue
-      state: started
+      state: restarted
       enabled: yes
